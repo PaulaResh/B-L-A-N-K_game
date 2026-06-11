@@ -144,7 +144,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 147452070}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 01614664b831546d2ae94a42149d80ac, type: 3}
   m_Name: 
@@ -873,7 +873,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebadc529ea110074badc6f6831cf17d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PickupItem
-  itemPrefab: {fileID: 2852992106696088155, guid: 64f80077b48c18644a699a4e2ebd4d7a, type: 3}
+  itemName: Key
+  interactionPrompt: "\u041F\u043E\u0434\u043E\u0431\u0440\u0430\u0442\u044C"
 --- !u!65 &683342058
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1012,9 +1013,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f82f8babe73228144a9c03409ce47f64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Door
-  openChance: 0.5
-  speed: 3
-  angle: 90
+  isOpen: 0
+  openAngle: 90
+  openSpeed: 2
+  interactionPromptOpen: "\u041E\u0442\u043A\u0440\u044B\u0442\u044C"
+  interactionPromptClose: "\u0417\u0430\u043A\u0440\u044B\u0442\u044C"
 --- !u!1 &748758539
 GameObject:
   m_ObjectHideFlags: 0
@@ -1044,7 +1047,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e67491301b96d68419f658f929995300, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Inventory
-  handPoint: {fileID: 1839898012}
+  items: []
+  currentHeldItem: 
 --- !u!4 &748758541
 Transform:
   m_ObjectHideFlags: 0
