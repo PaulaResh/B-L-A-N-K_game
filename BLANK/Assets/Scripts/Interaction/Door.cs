@@ -5,7 +5,9 @@ public class Door : MonoBehaviour, IInteractable
     [Header("Door Settings")]
     public bool isOpen = false;
     public float openAngle = 90f;
-    public float openSpeed = 2f;
+    public float openSpeed = 2.5f;
+
+    [Header("Interaction")]
     public string interactionPromptOpen = "Открыть";
     public string interactionPromptClose = "Закрыть";
 
@@ -17,8 +19,8 @@ public class Door : MonoBehaviour, IInteractable
     {
         closedRotation = transform.rotation;
         openRotation = Quaternion.Euler(transform.eulerAngles + new Vector3(0, openAngle, 0));
-        
-        // Random initial state (optional)
+
+        // Случайное начальное состояние (можно убрать)
         if (Random.value > 0.7f)
         {
             isOpen = true;
@@ -37,15 +39,23 @@ public class Door : MonoBehaviour, IInteractable
     private System.Collections.IEnumerator MoveDoor()
     {
         isMoving = true;
-        Quaternion targetRotation = isOpen ? openRotation : closedRotation;
 
-        while (Quaternion.Angle(transform.rotation, targetRotation) > 0.1f)
+        Quaternion startRot = transform.rotation;
+        Quaternion targetRot = isOpen ? openRotation : closedRotation;
+
+        float elapsed = 0f;
+        float duration = 1f / openSpeed;
+
+        while (elapsed < duration)
         {
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * openSpeed);
+            elapsed += Time.deltaTime;
+            float t = Mathf.SmoothStep(0f, 1f, elapsed / duration);
+
+            transform.rotation = Quaternion.Slerp(startRot, targetRot, t);
             yield return null;
         }
 
-        transform.rotation = targetRotation;
+        transform.rotation = targetRot;
         isMoving = false;
 
         if (AudioManager.Instance != null)
