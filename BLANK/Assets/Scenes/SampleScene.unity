@@ -1480,17 +1480,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00c578194ac5a464a8ab78e335c1995c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BabaykaAI
-  patrolSpeed: 4
-  chaseSpeed: 3.5
-  viewDistance: 8
-  killDistance: 1.2
-  points:
-  - {fileID: 200270993}
-  - {fileID: 167036162}
-  - {fileID: 1386438404}
-  - {fileID: 1640258218}
-  waitTimeAtPoint: 2
-  waitTimeInSafeZone: 3
 --- !u!143 &1477370979
 CharacterController:
   m_ObjectHideFlags: 0
@@ -1955,6 +1944,8 @@ GameObject:
   - component: {fileID: 2038203802}
   - component: {fileID: 2038203801}
   - component: {fileID: 2038203804}
+  - component: {fileID: 2038203806}
+  - component: {fileID: 2038203805}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1974,12 +1965,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d197fbef23d88b743afc3ea8f3f39118, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FirstPersonController
-  walkSpeed: 5
-  sprintSpeed: 8
-  jumpHeight: 1
-  gravity: -30
-  mouseSensitivity: 600
-  playerCamera: {fileID: 330585546}
 --- !u!143 &2038203802
 CharacterController:
   m_ObjectHideFlags: 0
@@ -2033,7 +2018,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6adc743065f346542ad0822d765b736f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInteraction
-  distance: 3
+--- !u!114 &2038203805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2038203800}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f099c671a799f244bf9f14083208f63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractionSystem
+  interactionDistance: 3
+  interactableLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  interactionPromptText: {fileID: 0}
+--- !u!114 &2038203806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2038203800}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed9b7674cfa3a7e45bdf7d124c8c6228, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+  walkSpeed: 5
+  runSpeed: 8
+  gravity: -9.81
+  mouseSensitivity: 2
+  maxLookAngle: 80
+  cameraTransform: {fileID: 0}
 --- !u!1 &2115156543
 GameObject:
   m_ObjectHideFlags: 0
