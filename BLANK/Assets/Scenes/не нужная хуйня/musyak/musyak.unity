@@ -1463,11 +1463,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fac9861fb233231459a7a1d72a20bf7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Door
-  openAngle: 90
-  speed: 1
-  modelOffsetX: -3.5
-  isOpen: 0
-  isAnimating: 0
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -1716,7 +1711,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.16666667
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: dd9efdce8bbf5554fb880f4afeabb6cc, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: 0c024d68f2ebd33498b91431cf05888c, type: 2}
   m_BuildHeightMesh: 0
 --- !u!65 &933285805
 BoxCollider:
@@ -3005,6 +3000,63 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.010604865, y: 0.055570677, z: 0.05664015}
   m_Center: {x: 0.13363236, y: 0.00024888953, z: 0.029977603}
+--- !u!1001 &2021081841
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: ce99736f21d12b84b91eab3c73a79edd, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 139.47
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ce99736f21d12b84b91eab3c73a79edd, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.7764716
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ce99736f21d12b84b91eab3c73a79edd, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -267.16974
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ce99736f21d12b84b91eab3c73a79edd, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ce99736f21d12b84b91eab3c73a79edd, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ce99736f21d12b84b91eab3c73a79edd, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ce99736f21d12b84b91eab3c73a79edd, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ce99736f21d12b84b91eab3c73a79edd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ce99736f21d12b84b91eab3c73a79edd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ce99736f21d12b84b91eab3c73a79edd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ce99736f21d12b84b91eab3c73a79edd, type: 3}
+      propertyPath: m_Name
+      value: Last_FinalCorridor
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ce99736f21d12b84b91eab3c73a79edd, type: 3}
 --- !u!1 &2038203800
 GameObject:
   m_ObjectHideFlags: 0
@@ -3114,9 +3166,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f08e176ef64ca7648b12a36f964953b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HeldItemManager
-  heldItemHolder: {fileID: 749312164}
-  currentHeldItem: 
-  currentHeldVisual: {fileID: 0}
 --- !u!1 &2134918688 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -4876107695272518306, guid: 9cc4e558c339b8047b88302239fa03c0, type: 3}
@@ -3161,3 +3210,4 @@ SceneRoots:
   - {fileID: 1131390417}
   - {fileID: 1779142920}
   - {fileID: 946817283}
+  - {fileID: 2021081841}
