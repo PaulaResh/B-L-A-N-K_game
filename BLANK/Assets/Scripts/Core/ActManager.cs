@@ -27,12 +27,13 @@ public class ActManager : MonoBehaviour
     private void Start()
     {
         if (monsterController == null)
-            monsterController = FindObjectOfType<MonsterController>();
+            monsterController = FindObjectOfType<MonsterController>();   // ← Добавь <MonsterController>
 
         if (dialogueSystem == null)
             dialogueSystem = FindObjectOfType<DialogueSystem>();
 
-        SetAct(GameAct.Act1);
+        Debug.Log($"[ActManager] Текущий акт при старте: {currentAct}");
+        SetAct(currentAct);
     }
 
     public void AdvanceToNextAct()
@@ -57,10 +58,16 @@ public class ActManager : MonoBehaviour
     public void SetAct(GameAct newAct)
     {
         currentAct = newAct;
-        Debug.Log($"[ActManager] Переход в {currentAct}");
+        Debug.Log($"[ActManager] === ПЕРЕХОД В {currentAct} ===");
 
         if (monsterController != null)
+        {
             monsterController.SetAct((MonsterController.Act)newAct);
+        }
+        else
+        {
+            Debug.LogError("[ActManager] MonsterController не найден!");
+        }
 
         switch (currentAct)
         {
@@ -82,8 +89,6 @@ public class ActManager : MonoBehaviour
             case GameAct.Act4:
                 if (dialogueSystem != null)
                     dialogueSystem.ShowThought(act4Message, 5f);
-                if (monsterController != null)
-                    monsterController.StartFinalChase();
                 break;
         }
     }

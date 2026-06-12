@@ -48,6 +48,9 @@ public class SlidingDoor : MonoBehaviour, IInteractable
 
     private System.Collections.IEnumerator MoveDoors()
     {
+        Vector3 leftStart = leftDoor.localPosition;
+        Vector3 rightStart = rightDoor.localPosition;
+
         isMoving = true;
 
         Vector3 leftTarget = isOpen ? leftOpenPos : leftClosedPos;
@@ -61,13 +64,15 @@ public class SlidingDoor : MonoBehaviour, IInteractable
             elapsed += Time.deltaTime;
             float t = Mathf.SmoothStep(0f, 1f, elapsed / duration);
 
-            leftDoor.localPosition = Vector3.Lerp(leftDoor.localPosition, leftTarget, t);
-            rightDoor.localPosition = Vector3.Lerp(rightDoor.localPosition, rightTarget, t);
+            leftDoor.localPosition =
+                Vector3.Lerp(leftStart, leftTarget, t);
+
+            rightDoor.localPosition =
+                Vector3.Lerp(rightStart, rightTarget, t);
 
             yield return null;
         }
 
-        // Финализируем позиции
         leftDoor.localPosition = leftTarget;
         rightDoor.localPosition = rightTarget;
 

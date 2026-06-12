@@ -2,36 +2,32 @@ using UnityEngine;
 
 public class PickupItem : MonoBehaviour, IInteractable
 {
-    [Header("Pickup Settings")]
-    public string itemName = "Key"; // "Key", "Switch", "Fuse"
-    public string interactionPrompt = "Подобрать";
+    [Header("Item")]
+    public ItemData itemData;
+
+    [Header("Audio")]
+    public string pickupSound = "Pickup";
 
     private bool isPickedUp = false;
 
     public void Interact()
-{
-    if (isPickedUp) return;
-
-    if (HeldItemManager.Instance != null)
     {
-        HeldItemManager.Instance.PickUpItem(itemName, gameObject);
+        if (isPickedUp) return;
+
+        SimpleInventory.Instance?.PickUpItem(itemData);
+
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySound(pickupSound);
+
+        isPickedUp = true;
+        gameObject.SetActive(false);
+
+        Debug.Log($"[PickupItem] Подобран: {itemData.displayName}");
     }
-
-    if (Inventory.Instance != null)
-    {
-        Inventory.Instance.AddItem(itemName);
-    }
-
-    isPickedUp = true;
-    gameObject.SetActive(false); // Прячем объект в мире
-
-    if (AudioManager.Instance != null)
-        AudioManager.Instance.PlaySound("Pickup");
-}
 
     public string GetInteractionPrompt()
     {
-        return interactionPrompt + " (" + itemName + ")";
+        return $"Подобрать ({itemData.displayName})";
     }
 
     public bool CanInteract()
