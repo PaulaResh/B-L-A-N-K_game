@@ -20,8 +20,7 @@ public class Door : MonoBehaviour, IInteractable
         closedRotation = transform.rotation;
         openRotation = Quaternion.Euler(transform.eulerAngles + new Vector3(0, openAngle, 0));
 
-        // Случайное начальное состояние (можно убрать)
-        if (Random.value > 0.7f)
+        if (Random.value > 0.8f)
         {
             isOpen = true;
             transform.rotation = openRotation;

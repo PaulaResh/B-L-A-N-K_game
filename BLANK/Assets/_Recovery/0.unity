@@ -1573,37 +1573,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2038203803}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &784966807
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 784966808}
-  m_Layer: 0
-  m_Name: DoorPivot.001
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &784966808
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 784966807}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1076571408}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &823276346 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6458155926783071180, guid: 021d70648c2e0c2469a3f9a6efea8d91, type: 3}
@@ -2089,7 +2058,7 @@ PrefabInstance:
       addedObject: {fileID: 1773469277}
     - targetCorrespondingSourceObject: {fileID: -3214082148599774157, guid: 021d70648c2e0c2469a3f9a6efea8d91, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 784966808}
+      addedObject: {fileID: 1665866450}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 021d70648c2e0c2469a3f9a6efea8d91, type: 3}
       insertIndex: -1
@@ -2120,10 +2089,10 @@ PrefabInstance:
       addedObject: {fileID: 2045195317}
     - targetCorrespondingSourceObject: {fileID: -2556468052137982631, guid: 021d70648c2e0c2469a3f9a6efea8d91, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1076571410}
+      addedObject: {fileID: 1076571412}
     - targetCorrespondingSourceObject: {fileID: -2556468052137982631, guid: 021d70648c2e0c2469a3f9a6efea8d91, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1076571409}
+      addedObject: {fileID: 1076571411}
     - targetCorrespondingSourceObject: {fileID: 6458155926783071180, guid: 021d70648c2e0c2469a3f9a6efea8d91, type: 3}
       insertIndex: -1
       addedObject: {fileID: 823276350}
@@ -2260,7 +2229,7 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -3214082148599774157, guid: 021d70648c2e0c2469a3f9a6efea8d91, type: 3}
   m_PrefabInstance: {fileID: 946817283}
   m_PrefabAsset: {fileID: 0}
---- !u!65 &1076571409
+--- !u!65 &1076571411
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2280,8 +2249,8 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 0.0106048575, y: 0.055570666, z: 0.056640144}
-  m_Center: {x: 0.13363141, y: 0.0002488931, z: 0.029977601}
---- !u!114 &1076571410
+  m_Center: {x: 0.13363093, y: 0.0002488931, z: 0.029977601}
+--- !u!114 &1076571412
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2295,7 +2264,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Door
   isOpen: 0
   openAngle: 90
-  openSpeed: 2.5
+  openSpeed: 2
   interactionPromptOpen: "\u041E\u0442\u043A\u0440\u044B\u0442\u044C"
   interactionPromptClose: "\u0417\u0430\u043A\u0440\u044B\u0442\u044C"
 --- !u!1 &1172055229
@@ -2968,6 +2937,37 @@ MonoBehaviour:
   openSpeed: 2
   interactionPromptOpen: "\u041E\u0442\u043A\u0440\u044B\u0442\u044C"
   interactionPromptClose: "\u0417\u0430\u043A\u0440\u044B\u0442\u044C"
+--- !u!1 &1665866449
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1665866450}
+  m_Layer: 0
+  m_Name: Door_check
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1665866450
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1665866449}
+  serializedVersion: 2
+  m_LocalRotation: {x: -1.2509052e-14, y: -0.7071068, z: -0.7071067, w: 0.00000010677015}
+  m_LocalPosition: {x: 0.1358, y: -0.0252, z: 0.003}
+  m_LocalScale: {x: 0.048277423, y: 0.017012974, z: 0.026648516}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1076571408}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1754591483
 GameObject:
   m_ObjectHideFlags: 0
