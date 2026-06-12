@@ -9,23 +9,25 @@ public class PickupItem : MonoBehaviour, IInteractable
     private bool isPickedUp = false;
 
     public void Interact()
+{
+    if (isPickedUp) return;
+
+    if (HeldItemManager.Instance != null)
     {
-        if (isPickedUp) return;
-
-        if (Inventory.Instance != null)
-        {
-            Inventory.Instance.AddItem(itemName);
-        }
-
-        isPickedUp = true;
-        gameObject.SetActive(false); // or destroy / put in inventory visually
-
-        // Optional: play pickup sound via AudioManager
-        if (AudioManager.Instance != null)
-            AudioManager.Instance.PlaySound("Pickup");
-
-        Debug.Log($"[Pickup] Picked up: {itemName}");
+        HeldItemManager.Instance.PickUpItem(itemName, gameObject);
     }
+
+    if (Inventory.Instance != null)
+    {
+        Inventory.Instance.AddItem(itemName);
+    }
+
+    isPickedUp = true;
+    gameObject.SetActive(false); // Прячем объект в мире
+
+    if (AudioManager.Instance != null)
+        AudioManager.Instance.PlaySound("Pickup");
+}
 
     public string GetInteractionPrompt()
     {

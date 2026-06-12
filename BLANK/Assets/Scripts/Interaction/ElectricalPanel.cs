@@ -2,51 +2,79 @@ using UnityEngine;
 
 public class ElectricalPanel : MonoBehaviour, IInteractable
 {
-    [Header("Electrical Panel")]
+    [Header("Electrical Panel Settings")]
     public string interactionPrompt = "Взаимодействовать со щитком";
-    
-    [Header("Required Items (in order)")]
-    public string requiredItemForAct2 = "Switch";      // Рубильник
-    public string requiredItemForAct3 = "Fuse";        // Предохранитель
 
-    private int currentStage = 0; // 0 = nothing, 1 = switch installed, 2 = fuse installed
+    [Header("Required Items")]
+    public string requiredItemForAct2 = "Switch";   // Рубильник
+    public string requiredItemForAct3 = "Fuse";     // Предохранитель
+
+    [Header("Current State")]
+    [SerializeField] private int currentStage = 0; // 0 = ничего, 1 = рубильник, 2 = предохранитель
 
     public void Interact()
     {
-        if (Inventory.Instance == null) return;
+        if (HeldItemManager.Instance == null)
+        {
+            Debug.LogWarning("[ElectricalPanel] HeldItemManager не найден!");
+            return;
+        }
 
         bool advanced = false;
 
-        if (currentStage == 0 && Inventory.Instance.HasItem(requiredItemForAct2))
+        // === Этап 1: Установка рубильника ===
+        if (currentStage == 0)
         {
-            Inventory.Instance.RemoveItem(requiredItemForAct2);
-            currentStage = 1;
-            Debug.Log("[ElectricalPanel] Рубильник установлен. Акт 2 → Акт 3");
-            advanced = true;
+            if (HeldItemManager.Instance.HasItem(requiredItemForAct2))
+            {
+                HeldItemManager.Instance.DropCurrentItem(); // Убираем из руки
+                currentStage = 1;
+                Debug.Log("[ElectricalPanel] Рубильник установлен.");
+
+                if (DialogueSystem.Instance != null)
+                    DialogueSystem.Instance.ShowThought("Рубильник на месте...", 2.5f);
+
+                advanced = true;
+            }
+            else
+            {
+                if (DialogueSystem.Instance != null)
+                    DialogueSystem.Instance.ShowThought("Нужен рубильник.", 2f);
+            }
         }
-        else if (currentStage == 1 && Inventory.Instance.HasItem(requiredItemForAct3))
-        {
-            Inventory.Instance.RemoveItem(requiredItemForAct3);
-            currentStage = 2;
-            Debug.Log("[ElectricalPanel] Предохранитель установлен. Акт 3 → Акт 4");
-            advanced = true;
-        }
-        else if (currentStage == 0)
-        {
-            if (DialogueSystem.Instance != null)
-                DialogueSystem.Instance.ShowThought("Нужен рубильник.", 2f);
-        }
+        // === Этап 2: Установка предохранителя ===
         else if (currentStage == 1)
         {
+            if (HeldItemManager.Instance.HasItem(requiredItemForAct3))
+            {
+                HeldItemManager.Instance.DropCurrentItem(); // Убираем из руки
+                currentStage = 2;
+                Debug.Log("[ElectricalPanel] Предохранитель установлен.");
+
+                if (DialogueSystem.Instance != null)
+                    DialogueSystem.Instance.ShowThought("Теперь всё работает...", 2.5f);
+
+                advanced = true;
+            }
+            else
+            {
+                if (DialogueSystem.Instance != null)
+                    DialogueSystem.Instance.ShowThought("Нужен предохранитель.", 2f);
+            }
+        }
+        else
+        {
             if (DialogueSystem.Instance != null)
-                DialogueSystem.Instance.ShowThought("Нужен предохранитель.", 2f);
+                DialogueSystem.Instance.ShowThought("Щиток уже активирован.", 2f);
         }
 
+        // Переход между актами
         if (advanced && ActManager.Instance != null)
         {
             ActManager.Instance.AdvanceToNextAct();
         }
 
+        // Звук
         if (AudioManager.Instance != null)
             AudioManager.Instance.PlaySound("PanelClick");
     }
