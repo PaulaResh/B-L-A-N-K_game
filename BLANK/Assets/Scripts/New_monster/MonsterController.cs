@@ -63,10 +63,10 @@ public class MonsterController : MonoBehaviour
 
     /// <summary>
     /// Обновляет параметры аниматора в зависимости от скорости агента.
+    /// Используй Blend Tree (Idle -> Walk -> Run) по параметру "Speed".
     /// </summary>
     private void UpdateAnimator()
     {
-        // БЕЗОПАСНАЯ ПРОВЕРКА: если animator не назначен — выходим
         if (animator == null) return;
 
         float currentSpeed = agent.isStopped ? 0f : agent.velocity.magnitude;
@@ -78,12 +78,7 @@ public class MonsterController : MonoBehaviour
     private void AttackPlayer()
     {
         AudioManager.Instance?.PlaySound(screamSound);
-        
-        // БЕЗОПАСНАЯ ПРОВЕРКА: вызываем SetTrigger только если animator существует
-        if (animator != null)
-        {
-            animator.SetTrigger("Attack");
-        }
+        animator?.SetTrigger("Attack");
 
         Debug.Log("[Monster] Игрок пойман!");
         PlayerSafety.RespawnPlayerNearElevator();
@@ -137,20 +132,11 @@ public class MonsterController : MonoBehaviour
         isActive = true;
         foreach (var r in renderers)
             r.enabled = true;
-        
-        if (agent != null)
-        {
-            agent.speed = patrolSpeed;
-            agent.isStopped = true;
-        }
+        agent.speed = patrolSpeed;
+        agent.isStopped = true;
 
         AudioManager.Instance?.PlaySound(appearSound);
-        
-        // БЕЗОПАСНАЯ ПРОВЕРКА для триггера появления
-        if (animator != null)
-        {
-            animator.SetTrigger("Appear");
-        }
+        animator?.SetTrigger("Appear");
 
         Debug.Log("[Monster] Act 2 — Появился");
     }
@@ -161,12 +147,8 @@ public class MonsterController : MonoBehaviour
         isActive = true;
         foreach (var r in renderers)
             r.enabled = true;
-        
-        if (agent != null)
-        {
-            agent.speed = chaseSpeed;
-            agent.isStopped = false;
-        }
+        agent.speed = chaseSpeed;
+        agent.isStopped = false;
 
         Debug.Log($"[Monster] Act 3 АКТИВИРОВАН! Позиция: {transform.position}");
     }
@@ -177,12 +159,8 @@ public class MonsterController : MonoBehaviour
         isActive = true;
         foreach (var r in renderers)
             r.enabled = true;
-        
-        if (agent != null)
-        {
-            agent.speed = finalChaseSpeed;
-            agent.isStopped = false;
-        }
+        agent.speed = finalChaseSpeed;
+        agent.isStopped = false;
 
         if (player != null)
         {

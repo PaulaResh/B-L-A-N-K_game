@@ -35,4 +35,4 @@ public class KeyPickup : MonoBehaviour, IInteractable
     {
         return !isPickedUp;
     }
-}
+}\
