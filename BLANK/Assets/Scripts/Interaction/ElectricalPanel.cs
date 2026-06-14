@@ -6,88 +6,60 @@ public class ElectricalPanel : MonoBehaviour, IInteractable
     public string interactionPrompt = "Взаимодействовать со щитком";
 
     [Header("Required Items")]
-    public string requiredItemForAct2 = "Switch";   // Рубильник
-    public string requiredItemForAct3 = "Fuse";     // Предохранитель
+    public string requiredItemForAct2 = "Switch";
+    public string requiredItemForAct3 = "Fuse";
 
     [Header("Current State")]
-    [SerializeField] private int currentStage = 0; // 0 = ничего, 1 = рубильник, 2 = предохранитель
+    [SerializeField] private int currentStage = 0;
+
+    private bool isCompleted = false;
 
     public void Interact()
     {
+        if (isCompleted) return;
+
         if (HeldItemManager.Instance == null)
         {
             Debug.LogWarning("[ElectricalPanel] HeldItemManager не найден!");
             return;
         }
 
-        bool advanced = false;
+        string requiredItem = ActManager.Instance.GetRequiredItemForCurrentAct();
 
-        // === Этап 1: Установка рубильника ===
-        if (currentStage == 0)
+        if (HeldItemManager.Instance.HasItem(requiredItem))
         {
-            if (HeldItemManager.Instance.HasItem(requiredItemForAct2))
-            {
-                HeldItemManager.Instance.DropCurrentItem(); // Убираем из руки
-                currentStage = 1;
-                Debug.Log("[ElectricalPanel] Рубильник установлен.");
+            HeldItemManager.Instance.DropCurrentItem();
+            currentStage++;
+            isCompleted = true;
 
-                if (DialogueSystem.Instance != null)
-                    DialogueSystem.Instance.ShowThought("Рубильник на месте...", 2.5f);
+            Debug.Log($"[ElectricalPanel] {requiredItem} установлен.");
 
-                advanced = true;
-            }
-            else
-            {
-                if (DialogueSystem.Instance != null)
-                    DialogueSystem.Instance.ShowThought("Нужен рубильник.", 2f);
-            }
-        }
-        // === Этап 2: Установка предохранителя ===
-        else if (currentStage == 1)
-        {
-            if (HeldItemManager.Instance.HasItem(requiredItemForAct3))
-            {
-                HeldItemManager.Instance.DropCurrentItem(); // Убираем из руки
-                currentStage = 2;
-                Debug.Log("[ElectricalPanel] Предохранитель установлен.");
+            if (DialogueSystem.Instance != null)
+                DialogueSystem.Instance.ShowThought("Теперь можно идти дальше...", 2.5f);
 
-                if (DialogueSystem.Instance != null)
-                    DialogueSystem.Instance.ShowThought("Теперь всё работает...", 2.5f);
+            // Активируем телепорт
+            SceneTeleporter teleporter = FindObjectOfType<SceneTeleporter>();
+            if (teleporter != null)
+                teleporter.Activate();
 
-                advanced = true;
-            }
-            else
-            {
-                if (DialogueSystem.Instance != null)
-                    DialogueSystem.Instance.ShowThought("Нужен предохранитель.", 2f);
-            }
+            if (ActManager.Instance != null)
+                ActManager.Instance.AdvanceToNextAct();
         }
         else
         {
             if (DialogueSystem.Instance != null)
-                DialogueSystem.Instance.ShowThought("Щиток уже активирован.", 2f);
+                DialogueSystem.Instance.ShowThought($"Нужен {requiredItem}.", 2f);
         }
-
-        // Переход между актами
-        if (advanced && ActManager.Instance != null)
-        {
-            ActManager.Instance.AdvanceToNextAct();
-        }
-
-        // Звук
-        if (AudioManager.Instance != null)
-            AudioManager.Instance.PlaySound("PanelClick");
     }
 
     public string GetInteractionPrompt()
     {
-        if (currentStage == 0) return "Установить рубильник";
-        if (currentStage == 1) return "Установить предохранитель";
-        return "Щиток активирован";
+        if (isCompleted) return "Щиток активирован";
+        return interactionPrompt;
     }
 
     public bool CanInteract()
     {
-        return currentStage < 2;
+        return !isCompleted;
     }
 }
