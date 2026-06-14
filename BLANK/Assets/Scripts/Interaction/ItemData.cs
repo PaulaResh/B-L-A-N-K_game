@@ -4,16 +4,12 @@ using UnityEngine;
 public class ItemData : ScriptableObject
 {
     [Header("Info")]
-    public string itemName;
-    public string displayName;
+    public string itemName;           // "Key", "Switch", "Fuse"
+    public string displayName;        // "Ключ", "Рубильник"
 
     [Header("Visual")]
-    public GameObject visualPrefab;
+    public GameObject visualPrefab;   // 3D-модель в руке
 
     [Header("Settings")]
-    public bool isConsumable = true;
-
-    [Header("Key Settings")]
-    public bool isKey = false;           // true, РµСЃР»Рё СЌС‚Рѕ РєР»СЋС‡
-    public string targetDoorId = "";     // ID РґРІРµСЂРё, РєРѕС‚РѕСЂСѓСЋ РѕС‚РєСЂС‹РІР°РµС‚
+    public bool isConsumable = true;  // пропадает после использования?
 }
