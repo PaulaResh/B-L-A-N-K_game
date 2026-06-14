@@ -2,68 +2,87 @@ using UnityEngine;
 
 public class ElectricalPanel : MonoBehaviour, IInteractable
 {
-    [Header("Panel")]
-    public string interactionPrompt = "Взаимодействовать";
+    [Header("Electrical Panel Settings")]
+    public string interactionPrompt = "Взаимодействовать со щитком";
 
-    [Header("Items")]
-    public ItemData requiredItem1;  // рубильник
-    public ItemData requiredItem2;  // предохранитель
+    [Header("Required Items")]
+    public string requiredItemForAct2 = "Switch";   // Рубильник
+    public string requiredItemForAct3 = "Fuse";     // Предохранитель
 
-    [Header("Teleport")]
-    public GameObject teleportZone;
-
-    [SerializeField] private int currentStage = 0; // 0 = ничего, 1 = первый, 2 = оба
+    [Header("Current State")]
+    [SerializeField] private int currentStage = 0; // 0 = ничего, 1 = рубильник, 2 = предохранитель
 
     public void Interact()
     {
+        if (HeldItemManager.Instance == null)
+        {
+            Debug.LogWarning("[ElectricalPanel] HeldItemManager не найден!");
+            return;
+        }
+
         bool advanced = false;
 
-        // Этап 1: первый предмет
-        if (currentStage == 0 && requiredItem1 != null)
+        // === Этап 1: Установка рубильника ===
+        if (currentStage == 0)
         {
-            if (SimpleInventory.Instance?.UseItem(requiredItem1.itemName) == true)
+            if (HeldItemManager.Instance.HasItem(requiredItemForAct2))
             {
+                HeldItemManager.Instance.DropCurrentItem(); // Убираем из руки
                 currentStage = 1;
-                Debug.Log($"[ElectricalPanel] Установлен: {requiredItem1.displayName}");
+                Debug.Log("[ElectricalPanel] Рубильник установлен.");
 
                 if (DialogueSystem.Instance != null)
-                    DialogueSystem.Instance.ShowThought($"{requiredItem1.displayName} на месте...", 2.5f);
+                    DialogueSystem.Instance.ShowThought("Рубильник на месте...", 2.5f);
 
                 advanced = true;
             }
-        }
-        // Этап 2: второй предмет
-        else if (currentStage == 1 && requiredItem2 != null)
-        {
-            if (SimpleInventory.Instance?.UseItem(requiredItem2.itemName) == true)
+            else
             {
+                if (DialogueSystem.Instance != null)
+                    DialogueSystem.Instance.ShowThought("Нужен рубильник.", 2f);
+            }
+        }
+        // === Этап 2: Установка предохранителя ===
+        else if (currentStage == 1)
+        {
+            if (HeldItemManager.Instance.HasItem(requiredItemForAct3))
+            {
+                HeldItemManager.Instance.DropCurrentItem(); // Убираем из руки
                 currentStage = 2;
-                Debug.Log($"[ElectricalPanel] Установлен: {requiredItem2.displayName}");
+                Debug.Log("[ElectricalPanel] Предохранитель установлен.");
 
                 if (DialogueSystem.Instance != null)
-                    DialogueSystem.Instance.ShowThought($"{requiredItem2.displayName} установлен...", 2.5f);
-
-                // Активируем телепорт
-                if (teleportZone != null)
-                    teleportZone.SetActive(true);
+                    DialogueSystem.Instance.ShowThought("Теперь всё работает...", 2.5f);
 
                 advanced = true;
             }
+            else
+            {
+                if (DialogueSystem.Instance != null)
+                    DialogueSystem.Instance.ShowThought("Нужен предохранитель.", 2f);
+            }
+        }
+        else
+        {
+            if (DialogueSystem.Instance != null)
+                DialogueSystem.Instance.ShowThought("Щиток уже активирован.", 2f);
         }
 
+        // Переход между актами
         if (advanced && ActManager.Instance != null)
+        {
             ActManager.Instance.AdvanceToNextAct();
+        }
 
+        // Звук
         if (AudioManager.Instance != null)
             AudioManager.Instance.PlaySound("PanelClick");
     }
 
     public string GetInteractionPrompt()
     {
-        if (currentStage == 0 && requiredItem1 != null)
-            return $"Установить {requiredItem1.displayName}";
-        if (currentStage == 1 && requiredItem2 != null)
-            return $"Установить {requiredItem2.displayName}";
+        if (currentStage == 0) return "Установить рубильник";
+        if (currentStage == 1) return "Установить предохранитель";
         return "Щиток активирован";
     }
 
