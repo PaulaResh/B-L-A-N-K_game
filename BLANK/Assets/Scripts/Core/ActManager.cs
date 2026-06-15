@@ -31,6 +31,7 @@ public class ActManager : MonoBehaviour
 
     private void Start()
     {
+
         if (monsterController == null)
             monsterController = FindObjectOfType<MonsterController>();
 

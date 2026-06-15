@@ -61,12 +61,24 @@ public class MonsterController : MonoBehaviour
     private bool isScaring = false;
     private bool isInSafeZone = false;
 
-    private void Awake() => Debug.Log("[Monster] AWAKE");
+    private void Awake()
+    {
+        Debug.Log("[Monster] AWAKE");
+
+        // Инициализируем agent как можно раньше
+        if (agent == null)
+            agent = GetComponent<NavMeshAgent>();
+
+        if (agent == null)
+            Debug.LogError("[Monster] NavMeshAgent НЕ НАЙДЕН НА ОБЪЕКТЕ! Добавь компонент NavMeshAgent.");
+    }
 
     private void Start()
     {
-        agent = GetComponent<NavMeshAgent>();
-        animator = GetComponent<Animator>();           // ← Добавь эту строку обязательно!
+        if (agent == null)
+            agent = GetComponent<NavMeshAgent>(); // дублирование на всякий случай
+
+        animator = GetComponent<Animator>(); // уже есть
 
         if (player == null)
             player = GameObject.FindGameObjectWithTag("Player")?.transform;
@@ -78,25 +90,12 @@ public class MonsterController : MonoBehaviour
             agent.stoppingDistance = 0.8f;
             agent.autoBraking = false;
         }
-
-        Debug.Log($"[Monster] Start() выполнен. Animator = {(animator != null ? "ОК" : "NULL!")}");
-
-        if (animator != null)
-        {
-            Debug.Log("[Monster] Animator параметры:");
-            foreach (var param in animator.parameters)
-                Debug.Log($"   → {param.name} ({param.type})");
-
-            animator.SetBool("IsWalking", true);
-            Debug.Log("[Monster] Принудительно IsWalking = true");
-        }
         else
         {
-            Debug.LogError("[Monster] ANIMATOR НЕ НАЙДЕН НА ОБЪЕКТЕ!");
+            Debug.LogError("[Monster] CRITICAL: NavMeshAgent missing!");
+            enabled = false;
+            return;
         }
-
-        lastPosition = transform.position;
-        gameObject.SetActive(false);
     }
 
     private void Update()
