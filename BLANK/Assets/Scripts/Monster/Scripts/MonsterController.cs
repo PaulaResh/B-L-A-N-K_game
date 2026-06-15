@@ -270,6 +270,7 @@ public class MonsterController : MonoBehaviour
 
         lastAttackTime = Time.time;
 
+        // Звуки и анимация атаки
         if (AudioManager.Instance != null)
             AudioManager.Instance.PlaySound(screamSound);
 
@@ -277,7 +278,30 @@ public class MonsterController : MonoBehaviour
             animator.SetTrigger("Attack");
 
         Debug.Log("[Monster] ИГРОК ПОЙМАН!");
-        PlayerSafety.RespawnPlayerNearElevator();
+
+        // Проверяем акт — в 1 и 2 акте не убиваем
+        if (ActManager.Instance != null)
+        {
+            if (ActManager.Instance.currentAct == ActManager.GameAct.Act1 ||
+                ActManager.Instance.currentAct == ActManager.GameAct.Act2)
+            {
+                Debug.Log("[Monster] Смерть отключена в Act 1 / Act 2");
+                return;
+            }
+        }
+
+        // Смерть только в Act 3 и Act 4
+        if (PlayerSafety.Instance != null)
+        {
+            PlayerSafety.Instance.KillPlayer();
+        }
+        else
+        {
+            // Если PlayerSafety нет — просто респавн на месте
+            Debug.LogWarning("PlayerSafety не найден! Респавним на месте.");
+            if (player != null)
+                player.position = transform.position + Vector3.back * 5f; // грубый респавн
+        }
     }
 
     // ====================== JUMP SCARE & ACT 4 ======================
@@ -423,5 +447,13 @@ public class MonsterController : MonoBehaviour
             RandomWanderPoint();
 
         SetWalking(true);
+    }
+
+    // Добавь этот метод в класс
+    public void SetState(MonsterState newState)
+    {
+        currentState = newState;
+        if (newState == MonsterState.Disabled)
+            agent.isStopped = true;
     }
 }
