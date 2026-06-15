@@ -1,84 +1,27 @@
-﻿using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine;
 
-public class PlayerSafety : MonoBehaviour
+public static class PlayerSafety
 {
-    public static PlayerSafety Instance { get; private set; }
+    public static Transform elevatorRespawnPoint; // Assign in Inspector or via code
 
-    [Header("Respawn Points")]
-    public Transform act3RespawnPoint;
-    public Transform act4RespawnPoint;
-
-    private void Awake()
+    public static void RespawnPlayerNearElevator()
     {
-        if (Instance == null)
-            Instance = this;
-        else
-            Destroy(gameObject);
-    }
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player == null) return;
 
-    public void KillPlayer()
-    {
-        RespawnPlayerAndResetMonster();
-    }
-
-    private void RespawnPlayerAndResetMonster()
-    {
-        Debug.Log($"[PlayerSafety] === СМЕРТЬ === Акт: {ActManager.Instance?.currentAct}");
-
-        // Респавн игрока
-        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-        if (playerObj == null)
+        if (elevatorRespawnPoint != null)
         {
-            Debug.LogError("[PlayerSafety] Игрок не найден по тегу Player!");
-            return;
-        }
-
-        Transform respawnPoint = null;
-
-        if (ActManager.Instance != null)
-        {
-            if (ActManager.Instance.currentAct == ActManager.GameAct.Act4)
-            {
-                respawnPoint = act4RespawnPoint;
-                Debug.Log("[PlayerSafety] Act 4 — используем act4RespawnPoint");
-            }
-            else if (ActManager.Instance.currentAct == ActManager.GameAct.Act3)
-            {
-                respawnPoint = act3RespawnPoint;
-                Debug.Log("[PlayerSafety] Act 3 — используем act3RespawnPoint");
-            }
-        }
-
-        if (respawnPoint != null)
-        {
-            playerObj.transform.position = respawnPoint.position;
-            playerObj.transform.rotation = respawnPoint.rotation;
-            Debug.Log($"[PlayerSafety] УСПЕШНЫЙ РЕСПАВН на {respawnPoint.name}");
+            player.transform.position = elevatorRespawnPoint.position;
+            player.transform.rotation = elevatorRespawnPoint.rotation;
         }
         else
         {
-            Debug.LogError("[PlayerSafety] Respawn point НЕ НАЗНАЧЕН! Проверка Act4: " + (act4RespawnPoint != null));
+            // Fallback: move player to origin or a default safe spot
+            player.transform.position = new Vector3(0, 1, 0);
         }
 
-        // Монстр
-        if (ActManager.Instance?.monsterController != null)
-        {
-            var monster = ActManager.Instance.monsterController;
-
-            if (ActManager.Instance.currentAct == ActManager.GameAct.Act4)
-            {
-                monster.gameObject.SetActive(false);
-                var trigger = FindObjectOfType<FinalChaseTrigger>();
-                if (trigger != null)
-                    trigger.ResetTrigger();
-                Debug.Log("[PlayerSafety] Монстр убран в Act 4");
-            }
-            else if (ActManager.Instance.currentAct == ActManager.GameAct.Act3)
-            {
-                monster.gameObject.SetActive(true);
-                monster.StartChase();
-            }
-        }
+        // Optional: reset velocity if using rigidbody
+        Rigidbody rb = player.GetComponent<Rigidbody>();
+        if (rb != null) rb.linearVelocity = Vector3.zero;
     }
 }
