@@ -38,7 +38,7 @@ public class ElectricalPanel : MonoBehaviour, IInteractable
                 DialogueSystem.Instance.ShowThought("Теперь можно идти дальше...", 2.5f);
 
             // Активируем телепорт
-            SceneTeleporter teleporter = FindObjectOfType<SceneTeleporter>();
+            SceneTeleporter teleporter = FindFirstObjectByType<SceneTeleporter>();
             if (teleporter != null)
                 teleporter.Activate();
 

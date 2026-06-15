@@ -53,7 +53,7 @@ public class MonsterController : MonoBehaviour
 
                 Debug.Log("[Monster] Игрок пойман!");
 
-                PlayerSafety.RespawnPlayerNearElevator();
+                //PlayerSafety.RespawnPlayerNearElevator();
 
                 isChasing = false;
                 agent.isStopped = true;
