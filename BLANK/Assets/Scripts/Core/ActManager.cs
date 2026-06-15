@@ -1,44 +1,126 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class ActManager : MonoBehaviour
 {
     public static ActManager Instance { get; private set; }
 
-    public enum Act { Act1, Act2, Act3, Act4 }
+    public enum GameAct { Act1, Act2, Act3, Act4 }
 
-    [Header("Current State")]
-    public Act currentAct = Act.Act1;
+    [Header("=== Текущий Акт ===")]
+    [Tooltip("Поменяй здесь акт — он сразу применится")]
+    public GameAct currentAct = GameAct.Act1;
 
-    public string GetRequiredItemForCurrentAct()
+    [Header("References")]
+    public MonsterController monsterController;
+    public DialogueSystem dialogueSystem;
+
+    [Header("Act Messages")]
+    public string act2Message = "Кажется, кто-то появился...";
+    public string act3Message = "Он начал охоту...";
+    public string act4Message = "Беги. Не останавливайся.";
+
+    private GameAct previousAct;
+
+    private void Awake()
     {
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
+    }
+
+    private void Start()
+    {
+
+        if (monsterController == null)
+            monsterController = FindObjectOfType<MonsterController>();
+
+        if (dialogueSystem == null)
+            dialogueSystem = FindObjectOfType<DialogueSystem>();
+
+        previousAct = currentAct;
+        ApplyAct();
+    }
+
+    // Это срабатывает, когда ты меняешь currentAct в Inspector
+    private void OnValidate()
+    {
+        // Защита от ошибок при загрузке сцены и в Editor-режиме
+        if (Instance == null || !Application.isPlaying)
+        {
+            previousAct = currentAct;
+            return;
+        }
+
+        if (previousAct != currentAct)
+        {
+            previousAct = currentAct;
+            ApplyAct();
+        }
+    }
+
+    private void ApplyAct()
+    {
+        Debug.Log($"[ActManager] Переход в {currentAct}");
+
+        if (monsterController == null) return;
+
         switch (currentAct)
         {
-            case Act.Act1: return "Key";
-            case Act.Act2: return "Fuse";
-            case Act.Act3: return "Switch";
-            default: return "";
+            case GameAct.Act1:
+                monsterController.gameObject.SetActive(false);
+                if (dialogueSystem != null)
+                    dialogueSystem.ShowThought("Нужно найти ключ...", 3f);
+                break;
+
+            case GameAct.Act2:
+                if (dialogueSystem != null)
+                    dialogueSystem.ShowThought(act2Message, 4f);
+                break;
+
+            case GameAct.Act3:
+                monsterController.StartChase();
+                if (dialogueSystem != null)
+                    dialogueSystem.ShowThought(act3Message, 4f);
+                break;
+
+            case GameAct.Act4:
+                if (dialogueSystem != null)
+                    dialogueSystem.ShowThought(act4Message, 5f);
+
+                // Убираем автоматическое появление
+                // monsterController.AppearBehindPlayer();   ← закомментируй или удали эту строку
+
+                Debug.Log("[ActManager] Act 4 загружен. Монстр ждёт триггер.");
+                break;
+        }
+    }
+
+    public void TriggerMonsterAppearance(Transform spawnPoint, Transform targetPoint)
+    {
+        if (currentAct == GameAct.Act2 && monsterController != null)
+        {
+            monsterController.AppearAndMoveTo(spawnPoint, targetPoint);
         }
     }
 
     public void AdvanceToNextAct()
     {
-        if (currentAct == Act.Act4) return;
-
-        currentAct++;
-        Debug.Log($"[ActManager] Переход в {currentAct}");
+        switch (currentAct)
+        {
+            case GameAct.Act1: currentAct = GameAct.Act2; break;
+            case GameAct.Act2: currentAct = GameAct.Act3; break;
+            case GameAct.Act3: currentAct = GameAct.Act4; break;
+            case GameAct.Act4: Debug.Log("Уже в финальном акте"); return;
+        }
+        ApplyAct();
     }
 
-    private void Awake()
+    public void TriggerFinalChase(Transform spawnPoint)
     {
-        if (Instance == null)
+        if (currentAct == GameAct.Act4 && monsterController != null)
         {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
+            monsterController.StartAct4Chase(spawnPoint);
         }
     }
 }
