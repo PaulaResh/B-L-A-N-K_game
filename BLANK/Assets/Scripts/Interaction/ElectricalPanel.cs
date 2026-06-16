@@ -21,7 +21,7 @@ public class ElectricalPanel : MonoBehaviour, IInteractable
 
         if (HeldItemManager.Instance.HasItem(requiredItem))
         {
-            HeldItemManager.Instance.UseCurrentItem();
+            HeldItemManager.Instance.UseCurrentItem(requiredItem);   // ← исправлено
 
             isCompleted = true;
 

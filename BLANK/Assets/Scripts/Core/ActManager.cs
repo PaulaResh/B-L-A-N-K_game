@@ -7,7 +7,6 @@ public class ActManager : MonoBehaviour
     public enum GameAct { Act1, Act2, Act3, Act4 }
 
     [Header("=== Текущий Акт ===")]
-    [Tooltip("Поменяй здесь акт — он сразу применится")]
     public GameAct currentAct = GameAct.Act1;
 
     [Header("References")]
@@ -28,7 +27,6 @@ public class ActManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-
         Instance = this;
         DontDestroyOnLoad(gameObject);
     }
@@ -36,10 +34,10 @@ public class ActManager : MonoBehaviour
     private void Start()
     {
         if (monsterController == null)
-            monsterController = FindObjectOfType<MonsterController>();
+            monsterController = FindFirstObjectByType<MonsterController>();
 
         if (dialogueSystem == null)
-            dialogueSystem = FindObjectOfType<DialogueSystem>();
+            dialogueSystem = FindFirstObjectByType<DialogueSystem>();
 
         previousAct = currentAct;
         ApplyAct();
@@ -88,13 +86,12 @@ public class ActManager : MonoBehaviour
             case GameAct.Act4:
                 if (dialogueSystem != null)
                     dialogueSystem.ShowThought(act4Message, 5f);
-
                 Debug.Log("[ActManager] Act 4 загружен. Монстр ждёт триггер.");
                 break;
         }
     }
 
-    // ←←← ВОТ ЭТОТ МЕТОД БЫЛ ДОБАВЛЕН (для ElectricalPanel)
+    // ←←← ВОТ ЭТОТ МЕТОД ДОБАВЛЕН (нужен ElectricalPanel)
     public string GetRequiredItemForCurrentAct()
     {
         switch (currentAct)
@@ -113,9 +110,7 @@ public class ActManager : MonoBehaviour
             case GameAct.Act1: currentAct = GameAct.Act2; break;
             case GameAct.Act2: currentAct = GameAct.Act3; break;
             case GameAct.Act3: currentAct = GameAct.Act4; break;
-            case GameAct.Act4:
-                Debug.Log("Уже в финальном акте");
-                return;
+            case GameAct.Act4: Debug.Log("Уже в финальном акте"); return;
         }
         ApplyAct();
     }
@@ -123,16 +118,12 @@ public class ActManager : MonoBehaviour
     public void TriggerMonsterAppearance(Transform spawnPoint, Transform targetPoint)
     {
         if (currentAct == GameAct.Act2 && monsterController != null)
-        {
             monsterController.AppearAndMoveTo(spawnPoint, targetPoint);
-        }
     }
 
     public void TriggerFinalChase(Transform spawnPoint)
     {
         if (currentAct == GameAct.Act4 && monsterController != null)
-        {
             monsterController.StartAct4Chase(spawnPoint);
-        }
     }
 }
