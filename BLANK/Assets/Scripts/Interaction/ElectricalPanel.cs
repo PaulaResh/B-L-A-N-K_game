@@ -2,25 +2,18 @@ using UnityEngine;
 
 public class ElectricalPanel : MonoBehaviour, IInteractable
 {
-    [Header("Electrical Panel Settings")]
+    [Header("Настройки")]
     public string interactionPrompt = "Взаимодействовать со щитком";
 
-    [Header("Required Items")]
-    public string requiredItemForAct2 = "Switch";
-    public string requiredItemForAct3 = "Fuse";
-
-    [Header("Current State")]
-    [SerializeField] private int currentStage = 0;
-
-    private bool isCompleted = false;
+    [SerializeField] private bool isCompleted = false;
 
     public void Interact()
     {
         if (isCompleted) return;
 
-        if (HeldItemManager.Instance == null)
+        if (HeldItemManager.Instance == null || ActManager.Instance == null)
         {
-            Debug.LogWarning("[ElectricalPanel] HeldItemManager не найден!");
+            Debug.LogWarning("[ElectricalPanel] Менеджеры не найдены!");
             return;
         }
 
@@ -28,11 +21,9 @@ public class ElectricalPanel : MonoBehaviour, IInteractable
 
         if (HeldItemManager.Instance.HasItem(requiredItem))
         {
-            HeldItemManager.Instance.DropCurrentItem();
-            currentStage++;
-            isCompleted = true;
+            HeldItemManager.Instance.UseCurrentItem();
 
-            Debug.Log($"[ElectricalPanel] {requiredItem} установлен.");
+            isCompleted = true;
 
             if (DialogueSystem.Instance != null)
                 DialogueSystem.Instance.ShowThought("Теперь можно идти дальше...", 2.5f);
@@ -42,8 +33,7 @@ public class ElectricalPanel : MonoBehaviour, IInteractable
             if (teleporter != null)
                 teleporter.Activate();
 
-            if (ActManager.Instance != null)
-                ActManager.Instance.AdvanceToNextAct();
+            ActManager.Instance.AdvanceToNextAct();
         }
         else
         {
@@ -54,8 +44,7 @@ public class ElectricalPanel : MonoBehaviour, IInteractable
 
     public string GetInteractionPrompt()
     {
-        if (isCompleted) return "Щиток активирован";
-        return interactionPrompt;
+        return isCompleted ? "Щиток активирован" : interactionPrompt;
     }
 
     public bool CanInteract()

@@ -23,15 +23,18 @@ public class ActManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
-            Instance = this;
-        else
+        if (Instance != null && Instance != this)
+        {
             Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     private void Start()
     {
-
         if (monsterController == null)
             monsterController = FindObjectOfType<MonsterController>();
 
@@ -42,10 +45,8 @@ public class ActManager : MonoBehaviour
         ApplyAct();
     }
 
-    // Это срабатывает, когда ты меняешь currentAct в Inspector
     private void OnValidate()
     {
-        // Защита от ошибок при загрузке сцены и в Editor-режиме
         if (Instance == null || !Application.isPlaying)
         {
             previousAct = currentAct;
@@ -88,19 +89,20 @@ public class ActManager : MonoBehaviour
                 if (dialogueSystem != null)
                     dialogueSystem.ShowThought(act4Message, 5f);
 
-                // Убираем автоматическое появление
-                // monsterController.AppearBehindPlayer();   ← закомментируй или удали эту строку
-
                 Debug.Log("[ActManager] Act 4 загружен. Монстр ждёт триггер.");
                 break;
         }
     }
 
-    public void TriggerMonsterAppearance(Transform spawnPoint, Transform targetPoint)
+    // ←←← ВОТ ЭТОТ МЕТОД БЫЛ ДОБАВЛЕН (для ElectricalPanel)
+    public string GetRequiredItemForCurrentAct()
     {
-        if (currentAct == GameAct.Act2 && monsterController != null)
+        switch (currentAct)
         {
-            monsterController.AppearAndMoveTo(spawnPoint, targetPoint);
+            case GameAct.Act1: return "Key";
+            case GameAct.Act2: return "Fuse";
+            case GameAct.Act3: return "Switch";
+            default: return "";
         }
     }
 
@@ -111,9 +113,19 @@ public class ActManager : MonoBehaviour
             case GameAct.Act1: currentAct = GameAct.Act2; break;
             case GameAct.Act2: currentAct = GameAct.Act3; break;
             case GameAct.Act3: currentAct = GameAct.Act4; break;
-            case GameAct.Act4: Debug.Log("Уже в финальном акте"); return;
+            case GameAct.Act4:
+                Debug.Log("Уже в финальном акте");
+                return;
         }
         ApplyAct();
+    }
+
+    public void TriggerMonsterAppearance(Transform spawnPoint, Transform targetPoint)
+    {
+        if (currentAct == GameAct.Act2 && monsterController != null)
+        {
+            monsterController.AppearAndMoveTo(spawnPoint, targetPoint);
+        }
     }
 
     public void TriggerFinalChase(Transform spawnPoint)
