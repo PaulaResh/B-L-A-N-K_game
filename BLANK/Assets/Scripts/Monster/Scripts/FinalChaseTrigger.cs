@@ -17,18 +17,21 @@ public class FinalChaseTrigger : MonoBehaviour
         {
             alreadyTriggered = true;
 
-            if (actManager.monsterController != null)
+            if (actManager.monsterController != null && monsterSpawnPoint != null)
             {
                 actManager.monsterController.StartAct4Chase(monsterSpawnPoint);
-                Debug.Log("[FinalChaseTrigger] Монстр появился в Act 4");
+                Debug.Log("[FinalChaseTrigger] Act 4 — Монстр успешно запущен!");
+            }
+            else
+            {
+                Debug.LogError("[FinalChaseTrigger] MonsterController или spawnPoint не назначен!");
             }
         }
     }
 
-    // Этот метод будет вызываться при смерти игрока
     public void ResetTrigger()
     {
         alreadyTriggered = false;
-        Debug.Log("[FinalChaseTrigger] Триггер сброшен — монстр может появиться снова");
+        Debug.Log("[FinalChaseTrigger] Триггер сброшен");
     }
 }

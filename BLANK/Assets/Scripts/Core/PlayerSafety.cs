@@ -26,7 +26,6 @@ public class PlayerSafety : MonoBehaviour
     {
         Debug.Log($"[PlayerSafety] === СМЕРТЬ === Акт: {ActManager.Instance?.currentAct}");
 
-        // Респавн игрока
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj == null)
         {
@@ -35,33 +34,40 @@ public class PlayerSafety : MonoBehaviour
         }
 
         Transform respawnPoint = null;
-
         if (ActManager.Instance != null)
         {
             if (ActManager.Instance.currentAct == ActManager.GameAct.Act4)
-            {
                 respawnPoint = act4RespawnPoint;
-                Debug.Log("[PlayerSafety] Act 4 — используем act4RespawnPoint");
-            }
             else if (ActManager.Instance.currentAct == ActManager.GameAct.Act3)
-            {
                 respawnPoint = act3RespawnPoint;
-                Debug.Log("[PlayerSafety] Act 3 — используем act3RespawnPoint");
-            }
         }
 
         if (respawnPoint != null)
         {
+            // === Улучшенный респавн ===
+            CharacterController cc = playerObj.GetComponent<CharacterController>();
+            if (cc != null) cc.enabled = false;
+
+            Rigidbody rb = playerObj.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+            }
+
             playerObj.transform.position = respawnPoint.position;
             playerObj.transform.rotation = respawnPoint.rotation;
-            Debug.Log($"[PlayerSafety] УСПЕШНЫЙ РЕСПАВН на {respawnPoint.name}");
+
+            if (cc != null) cc.enabled = true;
+
+            Debug.Log($"[PlayerSafety] УСПЕШНЫЙ РЕСПАВН на точку: {respawnPoint.name}");
         }
         else
         {
-            Debug.LogError("[PlayerSafety] Respawn point НЕ НАЗНАЧЕН! Проверка Act4: " + (act4RespawnPoint != null));
+            Debug.LogError("[PlayerSafety] Respawn point НЕ НАЗНАЧЕН для текущего акта!");
         }
 
-        // Монстр
+        // === Респавн/сброс монстра ===
         if (ActManager.Instance?.monsterController != null)
         {
             var monster = ActManager.Instance.monsterController;
@@ -70,14 +76,14 @@ public class PlayerSafety : MonoBehaviour
             {
                 monster.gameObject.SetActive(false);
                 var trigger = FindObjectOfType<FinalChaseTrigger>();
-                if (trigger != null)
-                    trigger.ResetTrigger();
-                Debug.Log("[PlayerSafety] Монстр убран в Act 4");
+                if (trigger != null) trigger.ResetTrigger();
+                Debug.Log("[PlayerSafety] Act 4 — монстр убран и триггер сброшен");
             }
             else if (ActManager.Instance.currentAct == ActManager.GameAct.Act3)
             {
                 monster.gameObject.SetActive(true);
                 monster.StartChase();
+                Debug.Log("[PlayerSafety] Act 3 — монстр перезапущен");
             }
         }
     }

@@ -303,50 +303,80 @@ public class MonsterController : MonoBehaviour
         }
     }
 
-    // ====================== JUMP SCARE & ACT 4 ======================
-    public void ScareAppearAndRun(Transform spawnPoint, Transform targetPoint, float runSpeed = 7.5f)
+    // ====================== JUMP SCARE ACT 2 ======================
+    public void ScareAppearAndRun(Transform spawnPoint, Transform targetPoint, float runSpeed = 7.8f)
     {
-        if (spawnPoint == null) return;
-        isScaring = true;
+        if (spawnPoint == null)
+        {
+            Debug.LogError("[Monster] ScareAppearAndRun: spawnPoint == null!");
+            return;
+        }
 
+        isScaring = true;
         gameObject.SetActive(true);
+
+        // === Надёжное появление ===
         transform.position = spawnPoint.position;
-        if (targetPoint != null)
-            transform.LookAt(targetPoint.position);
+        transform.rotation = spawnPoint.rotation;
+
+        if (agent == null)
+            agent = GetComponent<NavMeshAgent>();
+
+        if (agent != null)
+        {
+            agent.Warp(spawnPoint.position);        // самое надёжное перемещение по NavMesh
+            agent.isStopped = false;
+            agent.speed = runSpeed;
+            agent.avoidancePriority = 0;
+        }
 
         currentState = MonsterState.Wander;
-        agent.isStopped = false;
-        agent.speed = runSpeed;
-        agent.avoidancePriority = 0;
 
         if (targetPoint != null)
-            agent.SetDestination(targetPoint.position);
+        {
+            transform.LookAt(targetPoint.position);
+            if (agent != null)
+                agent.SetDestination(targetPoint.position);
+        }
 
         SetWalking(true);
-        Debug.Log("[Monster] Scare: Иду ПРЯМО к targetPoint");
+
+        Debug.Log($"[Monster] SCARE SPAWN → Появился в {spawnPoint.name} | Позиция: {transform.position}");
+
         StartCoroutine(DisappearAfterReach(targetPoint));
     }
 
     private IEnumerator DisappearAfterReach(Transform targetPoint)
     {
-        if (targetPoint != null)
+        Debug.Log("[Monster] Корутина DisappearAfterReach запущена");
+
+        // Даём время монстру начать движение
+        yield return new WaitForSeconds(1.2f);
+
+        if (targetPoint != null && agent != null)
         {
+            float timeout = 15f;
             float startTime = Time.time;
-            while (Time.time - startTime < 10f)
+
+            while (Time.time - startTime < timeout)
             {
-                if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 1.5f)
+                if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 1.2f)
+                {
+                    Debug.Log("[Monster] Дошёл до targetPoint");
                     break;
+                }
                 yield return null;
             }
         }
         else
         {
-            yield return new WaitForSeconds(3f);
+            yield return new WaitForSeconds(4f);
         }
 
-        yield return new WaitForSeconds(0.4f);
+        // Финальная задержка перед исчезновением
+        yield return new WaitForSeconds(1.0f);
 
-        agent.isStopped = true;
+        if (agent != null) agent.isStopped = true;
         SetWalking(false);
         currentState = MonsterState.Disabled;
         isScaring = false;
