@@ -4,7 +4,7 @@ public class HeldItemManager : MonoBehaviour
 {
     public static HeldItemManager Instance { get; private set; }
 
-    [Header("Holder (пустой объект в руке игрока)")]
+    [Header("Куда вешать визуал предмета в руке")]
     public Transform heldItemHolder;
 
     private string currentItemName = "";
@@ -24,7 +24,7 @@ public class HeldItemManager : MonoBehaviour
     {
         currentItemName = itemName;
 
-        // Удаляем предыдущий визуал, если был
+        // Удаляем старый визуал, если был
         if (currentHeldVisual != null)
             Destroy(currentHeldVisual);
 
@@ -34,7 +34,7 @@ public class HeldItemManager : MonoBehaviour
             currentHeldVisual = Instantiate(worldObject, heldItemHolder);
             currentHeldVisual.transform.localPosition = Vector3.zero;
             currentHeldVisual.transform.localRotation = Quaternion.identity;
-            currentHeldVisual.transform.localScale = Vector3.one * 0.6f;
+            currentHeldVisual.transform.localScale = Vector3.one * 0.55f;
 
             // Отключаем коллайдер и скрипты на копии в руке
             Collider col = currentHeldVisual.GetComponent<Collider>();
@@ -48,7 +48,7 @@ public class HeldItemManager : MonoBehaviour
             }
         }
 
-        Debug.Log($"[HeldItemManager] Подобран предмет: {itemName}");
+        Debug.Log($"[HeldItemManager] Подобран: {itemName}");
     }
 
     public bool HasItem(string itemName)
@@ -64,10 +64,5 @@ public class HeldItemManager : MonoBehaviour
             currentHeldVisual = null;
         }
         currentItemName = "";
-    }
-
-    public void DropCurrentItem()
-    {
-        UseCurrentItem();
     }
 }
