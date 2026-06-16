@@ -303,128 +303,76 @@ public class MonsterController : MonoBehaviour
         }
     }
 
-    // ====================== JUMP SCARE ACT 2 ======================
-    public void ScareAppearAndRun(Transform spawnPoint, Transform targetPoint, float runSpeed = 7.8f)
+    // ====================== JUMP SCARE & ACT 4 ======================
+    public void ScareAppearAndRun(Transform spawnPoint, Transform targetPoint, float runSpeed = 7.5f)
     {
-        if (spawnPoint == null)
-        {
-            Debug.LogError("[Monster] ScareAppearAndRun: spawnPoint == null!");
-            return;
-        }
-
+        if (spawnPoint == null) return;
         isScaring = true;
 
-        // === Максимально надёжное появление ===
         gameObject.SetActive(true);
-
-        if (agent == null)
-            agent = GetComponent<NavMeshAgent>();
-
-        if (agent != null)
-        {
-            agent.Warp(spawnPoint.position);           // Самое надёжное перемещение
-            agent.isStopped = false;
-            agent.speed = runSpeed;
-            agent.avoidancePriority = 0;
-        }
-        else
-        {
-            transform.position = spawnPoint.position;
-        }
-
-        transform.rotation = spawnPoint.rotation;
+        transform.position = spawnPoint.position;
+        if (targetPoint != null)
+            transform.LookAt(targetPoint.position);
 
         currentState = MonsterState.Wander;
+        agent.isStopped = false;
+        agent.speed = runSpeed;
+        agent.avoidancePriority = 0;
 
         if (targetPoint != null)
-        {
-            transform.LookAt(targetPoint.position);
-            if (agent != null)
-                agent.SetDestination(targetPoint.position);
-        }
+            agent.SetDestination(targetPoint.position);
 
         SetWalking(true);
-
-        Debug.Log($"[SCARE ACT 2] Монстр появился в {spawnPoint.name} | Позиция: {transform.position}");
-
+        Debug.Log("[Monster] Scare: Иду ПРЯМО к targetPoint");
         StartCoroutine(DisappearAfterReach(targetPoint));
     }
 
     private IEnumerator DisappearAfterReach(Transform targetPoint)
     {
-        Debug.Log("[SCARE] Корутина запуска — ждём пока добежит");
-
-        yield return new WaitForSeconds(0.6f); // даём время на старт
-
-        if (targetPoint != null && agent != null)
+        if (targetPoint != null)
         {
             float startTime = Time.time;
-            while (Time.time - startTime < 12f)
+            while (Time.time - startTime < 10f)
             {
-                if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 1f)
-                {
-                    Debug.Log("[SCARE] Дошёл до цели");
+                if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 1.5f)
                     break;
-                }
                 yield return null;
             }
         }
         else
         {
-            yield return new WaitForSeconds(3.5f);
+            yield return new WaitForSeconds(3f);
         }
 
-        yield return new WaitForSeconds(0.7f);
+        yield return new WaitForSeconds(0.4f);
 
-        if (agent != null) agent.isStopped = true;
+        agent.isStopped = true;
         SetWalking(false);
         currentState = MonsterState.Disabled;
         isScaring = false;
         gameObject.SetActive(false);
 
-        Debug.Log("[SCARE] Монстр исчез");
+        Debug.Log("[Monster] Act 2 Jump Scare — исчез");
     }
 
     public void StartAct4Chase(Transform spawnPoint)
     {
-        if (spawnPoint == null)
-        {
-            Debug.LogError("[Monster] StartAct4Chase: spawnPoint == null! Назначь точку в FinalChaseTrigger.");
-            return;
-        }
+        if (spawnPoint == null) return;
 
-        // Надёжное появление
         gameObject.SetActive(true);
-
-        if (agent == null)
-            agent = GetComponent<NavMeshAgent>();
-
-        if (agent != null)
-        {
-            agent.Warp(spawnPoint.position);           // Самое надёжное перемещение
-            agent.isStopped = false;
-            agent.speed = act4ChaseSpeed;
-            agent.avoidancePriority = 0;
-            Debug.Log($"[ACT 4] Монстр Warp в точку: {spawnPoint.name} | Позиция: {transform.position}");
-        }
-        else
-        {
-            transform.position = spawnPoint.position;
-            Debug.LogWarning("[ACT 4] Agent не найден, используем transform.position");
-        }
-
-        transform.rotation = spawnPoint.rotation;
-
+        transform.position = spawnPoint.position;
         if (player != null)
             transform.LookAt(player.position + Vector3.up * 1.5f);
 
         currentState = MonsterState.FinalChase;
+        agent.isStopped = false;
+        agent.speed = act4ChaseSpeed;
+
         hasMemoryTarget = true;
         loseSightTimer = 0f;
 
         SetWalking(true);
-
-        Debug.Log($"[ACT 4 FINAL CHASE] Монстр успешно заспавнился в {spawnPoint.name}");
+        Debug.Log("[Monster] ACT 4 FINAL CHASE — началась!");
     }
 
     // ====================== SAFE ZONE ======================
