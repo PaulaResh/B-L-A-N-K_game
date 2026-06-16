@@ -4,83 +4,70 @@ public class HeldItemManager : MonoBehaviour
 {
     public static HeldItemManager Instance { get; private set; }
 
-    [Header("Holder")]
-    public Transform heldItemHolder;           // Пустой объект перед камерой
+    [Header("Holder (пустой объект в руке игрока)")]
+    public Transform heldItemHolder;
 
-    [Header("Current State")]
-    public string currentHeldItem = "";        // Название предмета в руке
-
-    private GameObject currentHeldVisual;      // Текущая модель в руке
+    private string currentItemName = "";
+    private GameObject currentHeldVisual;
 
     private void Awake()
     {
-        if (Instance == null)
-            Instance = this;
-        else
+        if (Instance != null && Instance != this)
+        {
             Destroy(gameObject);
+            return;
+        }
+        Instance = this;
     }
 
-    /// <summary>
-    /// Подбирает предмет и показывает его в руке
-    /// </summary>
-    public void PickUpItem(string itemName, GameObject worldObject = null)
+    public void PickUpItem(string itemName, GameObject worldObject)
     {
-        // Убираем предыдущий предмет, если был
-        DropCurrentItem();
+        currentItemName = itemName;
 
-        currentHeldItem = itemName;
+        // Удаляем предыдущий визуал, если был
+        if (currentHeldVisual != null)
+            Destroy(currentHeldVisual);
 
-        // Если передали объект из мира — создаём его копию в руке
-        if (worldObject != null)
+        // Создаём визуальную копию предмета в руке
+        if (heldItemHolder != null && worldObject != null)
         {
             currentHeldVisual = Instantiate(worldObject, heldItemHolder);
             currentHeldVisual.transform.localPosition = Vector3.zero;
             currentHeldVisual.transform.localRotation = Quaternion.identity;
-            currentHeldVisual.transform.localScale = Vector3.one * 0.6f; // Можно подкрутить размер
+            currentHeldVisual.transform.localScale = Vector3.one * 0.6f;
 
-            // Отключаем коллайдер и скрипты, чтобы не мешали
+            // Отключаем коллайдер и скрипты на копии в руке
             Collider col = currentHeldVisual.GetComponent<Collider>();
             if (col) col.enabled = false;
 
-            // Отключаем все скрипты на визуальной копии
             MonoBehaviour[] scripts = currentHeldVisual.GetComponents<MonoBehaviour>();
             foreach (var script in scripts)
             {
-                if (script != null) script.enabled = false;
+                if (script is PickupItem || script is IInteractable)
+                    script.enabled = false;
             }
         }
 
-        Debug.Log($"[HeldItem] В руке: {itemName}");
+        Debug.Log($"[HeldItemManager] Подобран предмет: {itemName}");
     }
 
-    /// <summary>
-    /// Убирает текущий предмет из руки
-    /// </summary>
-    public void DropCurrentItem()
+    public bool HasItem(string itemName)
+    {
+        return currentItemName == itemName;
+    }
+
+    public void UseCurrentItem()
     {
         if (currentHeldVisual != null)
         {
             Destroy(currentHeldVisual);
             currentHeldVisual = null;
         }
-        currentHeldItem = "";
+        currentItemName = "";
     }
 
-    public bool HasItem(string itemName)
+    public void DropCurrentItem()
     {
-        return currentHeldItem == itemName;
-    }
-
-    /// <summary>
-    /// Использует предмет (например, на щитке) и убирает его
-    /// </summary>
-    public bool UseCurrentItem(string requiredItem)
-    {
-        if (currentHeldItem == requiredItem)
-        {
-            DropCurrentItem();
-            return true;
-        }
-        return false;
+        UseCurrentItem();
     }
 }
