@@ -1,14 +1,10 @@
 using UnityEngine;
-using UnityEngine.UI;
 
 public class InteractionSystem : MonoBehaviour
 {
-    [Header("Raycast Settings")]
+    [Header("Settings")]
     public float interactionDistance = 3f;
     public LayerMask interactableLayer;
-
-    [Header("UI References (optional)")]
-    public Text interactionPromptText; // Assign in Inspector or leave null
 
     private Camera playerCamera;
     private IInteractable currentInteractable;
@@ -16,8 +12,6 @@ public class InteractionSystem : MonoBehaviour
     private void Start()
     {
         playerCamera = Camera.main;
-        if (playerCamera == null)
-            playerCamera = GetComponentInChildren<Camera>();
     }
 
     private void Update()
@@ -41,34 +35,11 @@ public class InteractionSystem : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit, interactionDistance, interactableLayer))
         {
-            IInteractable interactable = hit.collider.GetComponent<IInteractable>();
+            IInteractable interactable = hit.collider.GetComponentInParent<IInteractable>();
             if (interactable != null && interactable.CanInteract())
             {
                 currentInteractable = interactable;
-                ShowPrompt(currentInteractable.GetInteractionPrompt());
-                return;
             }
         }
-
-        HidePrompt();
-    }
-
-    private void ShowPrompt(string prompt)
-    {
-        if (interactionPromptText != null)
-        {
-            interactionPromptText.text = prompt + " [F]";
-            interactionPromptText.enabled = true;
-        }
-        else
-        {
-            Debug.Log("[Interaction] " + prompt + " [F]");
-        }
-    }
-
-    private void HidePrompt()
-    {
-        if (interactionPromptText != null)
-            interactionPromptText.enabled = false;
     }
 }
