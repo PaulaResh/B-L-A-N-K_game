@@ -28,10 +28,7 @@ public class ActManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-
         Instance = this;
-        // DontDestroyOnLoad лучше использовать осторожно
-        // DontDestroyOnLoad(gameObject);   ← закомментировал, потому что ActManager обычно живёт в одной сцене
     }
 
     private void Start()
@@ -63,7 +60,7 @@ public class ActManager : MonoBehaviour
 
     private void ApplyAct()
     {
-        Debug.Log($"[ActManager] Переход в {currentAct}");
+        Debug.Log($"[ActManager] === ПЕРЕХОД В {currentAct} ===");
 
         if (monsterController == null)
         {
@@ -71,34 +68,38 @@ public class ActManager : MonoBehaviour
             return;
         }
 
+        // Сначала выключаем монстра
+        monsterController.gameObject.SetActive(false);
+        monsterController.SetState(MonsterController.MonsterState.Disabled);
+
         switch (currentAct)
         {
             case GameAct.Act1:
-                monsterController.gameObject.SetActive(false);
+                Debug.Log("[ActManager] Act 1 — монстр выключен");
                 break;
 
             case GameAct.Act2:
-                monsterController.gameObject.SetActive(false);   // ← Важно!
                 if (dialogueSystem != null)
                     dialogueSystem.ShowThought(act2Message, 4f);
                 Debug.Log("[ActManager] Act 2 — монстр выключен (ждёт триггер)");
                 break;
 
             case GameAct.Act3:
+                Debug.Log("[ActManager] Act 3 — ЗАПУСК ПАТРУЛЯ");
                 monsterController.StartChase();
                 if (dialogueSystem != null)
                     dialogueSystem.ShowThought(act3Message, 4f);
                 break;
 
             case GameAct.Act4:
-                monsterController.gameObject.SetActive(false);
                 if (dialogueSystem != null)
                     dialogueSystem.ShowThought(act4Message, 5f);
-                Debug.Log("[ActManager] Act 4 — монстр выключен (ждёт триггер)");
+                Debug.Log("[ActManager] Act 4 — монстр выключен (ждёт FinalChaseTrigger)");
                 break;
         }
     }
 
+    // ← Этот метод был нужен для ElectricalPanel
     public string GetRequiredItemForCurrentAct()
     {
         switch (currentAct)
